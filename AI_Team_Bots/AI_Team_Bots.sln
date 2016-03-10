@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Team_Bots.CSharp", "AI_Team_Bots.CSharp.csproj", "{83E1F0F5-8A13-87E6-7EF4-262824186B31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Team_Bots.CSharp.Editor", "AI_Team_Bots.CSharp.Editor.csproj", "{62994776-9FA2-CA85-F911-2C2B8BEF3AB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83E1F0F5-8A13-87E6-7EF4-262824186B31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E1F0F5-8A13-87E6-7EF4-262824186B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E1F0F5-8A13-87E6-7EF4-262824186B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E1F0F5-8A13-87E6-7EF4-262824186B31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62994776-9FA2-CA85-F911-2C2B8BEF3AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62994776-9FA2-CA85-F911-2C2B8BEF3AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62994776-9FA2-CA85-F911-2C2B8BEF3AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62994776-9FA2-CA85-F911-2C2B8BEF3AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
