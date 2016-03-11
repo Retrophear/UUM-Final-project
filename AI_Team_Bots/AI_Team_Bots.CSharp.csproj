@@ -73,27 +73,11 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
-    <Reference Include="RAIN">
-      <HintPath>Assets\RAIN\RAIN.dll</HintPath>
-    </Reference>
-    <Reference Include="RAINMetaform">
-      <HintPath>Assets\RAIN\RAINMetaform.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\AI.cs" />
+    <Compile Include="Assets\Scripts\FPS_Mechanics.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\RAIN\Editor\ScriptTemplates\BehaviorTreeTemplate.xml" />
-    <None Include="Assets\RAIN\Editor\Shaders\AspectRingShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\AspectSphereShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\NavMeshColliderShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\NavMeshContourShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\VisualSensorLineShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\VisualSensorRingShader.shader" />
-    <None Include="Assets\RAIN\Editor\Shaders\WaypointShader.shader" />
-    <None Include="Assets\RAIN\ReleaseNotes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>

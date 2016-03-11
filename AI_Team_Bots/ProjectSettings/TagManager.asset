@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - bTeam
+  - gTeam
+  - Bullet
+  - BluSpawn
+  - GrnSpawn
+  - gc
   layers:
   - Default
   - TransparentFX
@@ -14,8 +19,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Level
+  - Agent
   - 
   - 
   - 

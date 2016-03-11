@@ -13,12 +13,15 @@ public class AI : MonoBehaviour
     public Vector3 teamLKP;
 
 
+    
+
     void Awake()
     {
         GetTeam();
     }
     void Start()
     {
+        InvokeRepeating("CommunicatePosition", 0f, 2f);
         //NavMeshAgent agent = GetComponent<NavMeshAgent>();
         //agent.destination = goal.position;
    
@@ -27,12 +30,9 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(CoRoMethod(CommunicatePosition,2f));
-    }
-    void FixedUpdate()
-    {
 
     }
+
     private void GetTeam()
     {
         friendlyTeam = new List<GameObject>();
@@ -51,7 +51,7 @@ public class AI : MonoBehaviour
             if (ob != gameObject)
             {
                 ob.GetComponent<AI>().teamLKP = gameObject.transform.position;
-                Debug.Log("Fired from " + gameObject.name + " " + Time.realtimeSinceStartup);
+               
             }
         }
 
@@ -59,7 +59,7 @@ public class AI : MonoBehaviour
 
    IEnumerator CoRoMethod(Action Method,float waitTime)
     {
-
+       
         yield return new WaitForSeconds(waitTime);
         Method();
     }
