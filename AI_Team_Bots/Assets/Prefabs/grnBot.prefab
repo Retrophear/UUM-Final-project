@@ -13,8 +13,8 @@ GameObject:
   - 23: {fileID: 2371708}
   - 114: {fileID: 11480686}
   - 195: {fileID: 19555518}
-  - 135: {fileID: 13503140}
   - 54: {fileID: 5461848}
+  - 114: {fileID: 11455682}
   m_Layer: 9
   m_Name: grnBot
   m_TagString: gTeam
@@ -76,10 +76,24 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: .0500000007
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 96
   m_CollisionDetection: 0
+--- !u!114 &11455682
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 166352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5883078ccdc0e964db00831b9ee15871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  fieldOfViewAngle: 110
+  enemySighted: 0
 --- !u!114 &11480686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,18 +108,6 @@ MonoBehaviour:
   goal: {fileID: 0}
   friendlyTeam: []
   teamLKP: {x: 0, y: 0, z: 0}
---- !u!135 &13503140
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 166352}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 31.1900005
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &13661004
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -156,7 +158,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsKinematic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
@@ -168,7 +170,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Constraints
-      value: 112
+      value: 96
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: health
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -13,7 +13,6 @@ GameObject:
   - 23: {fileID: 2394286}
   - 114: {fileID: 11433812}
   - 195: {fileID: 19570606}
-  - 135: {fileID: 13566330}
   - 114: {fileID: 11427772}
   - 54: {fileID: 5492674}
   m_Layer: 9
@@ -77,9 +76,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: .0500000007
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 96
   m_CollisionDetection: 0
 --- !u!114 &11427772
 MonoBehaviour:
@@ -92,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5883078ccdc0e964db00831b9ee15871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldOfViewAngle: 110
+  health: 0
   enemySighted: 0
 --- !u!114 &11433812
 MonoBehaviour:
@@ -108,18 +107,6 @@ MonoBehaviour:
   goal: {fileID: 0}
   friendlyTeam: []
   teamLKP: {x: 0, y: 0, z: 0}
---- !u!135 &13566330
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 138460}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 31.1900005
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &13630586
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -161,12 +148,16 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: m_UseGravity
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsKinematic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Enabled
@@ -176,6 +167,34 @@ Prefab:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Constraints
+      value: 96
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cullingMask.m_Bits
+      value: 768
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fovAngle
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fovMaxDistance
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b5d26c127b8ae2d41be2248c59cb9168, type: 2}
+    - target: {fileID: 0}
+      propertyPath: materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: c1c7092e812ef344aa2fab3f0aad6569, type: 2}
+    - target: {fileID: 0}
+      propertyPath: materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3cb7b1b35ba9abe47ad0970defd1c93f, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 138460}

@@ -1,43 +1,43 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &178768
+--- !u!1 &113326
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 437280}
-  - 33: {fileID: 3377812}
-  - 136: {fileID: 13603574}
-  - 23: {fileID: 2356234}
-  - 54: {fileID: 5485010}
-  - 114: {fileID: 11488206}
+  - 4: {fileID: 498564}
+  - 33: {fileID: 3373672}
+  - 135: {fileID: 13519484}
+  - 23: {fileID: 2337540}
+  - 114: {fileID: 11410570}
+  - 54: {fileID: 5476626}
   m_Layer: 9
-  m_Name: Bullet
+  m_Name: rBullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &437280
+--- !u!4 &498564
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
-  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106709}
-  m_LocalPosition: {x: 0, y: 4.30000019, z: 0}
-  m_LocalScale: {x: .0841016695, y: .693446517, z: .104223363}
+  m_GameObject: {fileID: 113326}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: .611999989, z: 26.5731487}
+  m_LocalScale: {x: .25, y: .25, z: .25}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!23 &2356234
+--- !u!23 &2337540
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
+  m_GameObject: {fileID: 113326}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -56,21 +56,21 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &3377812
+--- !u!33 &3373672
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &5485010
+  m_GameObject: {fileID: 113326}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &5476626
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
+  m_GameObject: {fileID: 113326}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: .00999999978
   m_Drag: 0
   m_AngularDrag: .0500000007
   m_UseGravity: 0
@@ -78,30 +78,29 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &11488206
+--- !u!114 &11410570
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
+  m_GameObject: {fileID: 113326}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db7b0670215700d47950d95aca86f8af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bDmg: 0
---- !u!136 &13603574
-CapsuleCollider:
+  bDmg: 50
+--- !u!135 &13519484
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178768}
+  m_GameObject: {fileID: 113326}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: .5
-  m_Height: 2
-  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &100100000
 Prefab:
@@ -111,15 +110,7 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Mass
-      value: .5
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Constraints
+      propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
@@ -127,22 +118,14 @@ Prefab:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
       propertyPath: m_TagString
       value: Bullet
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: m_CollisionDetection
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_IsKinematic
-      value: 0
+      propertyPath: m_Mass
+      value: .00999999978
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 178768}
+  m_RootGameObject: {fileID: 113326}
   m_IsPrefabParent: 1

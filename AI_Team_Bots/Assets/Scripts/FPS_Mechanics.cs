@@ -3,81 +3,84 @@ using System.Collections;
 
 public class FPS_Mechanics : MonoBehaviour {
 
-    int health;
-    int bDamage;
-
-    public float fieldOfViewAngle = 110f;          
+    public int health;
     public bool enemySighted;
-    private SphereCollider col;
-    private GameController gc;
+    public GameObject enemy;
+    public float reFireRate;
+    public float bulletSpeed;
 
+    private GameController gc;
+    private string enemyTag;
     private float lastShot;
+    FOV2DEyes eyes;
+    FOV2DVisionCone visionCone;
     void Awake()
     {
         lastShot = 0;
         health = 200;
-        bDamage = 50;
-        col = gameObject.GetComponent<SphereCollider>();
         gc = GameObject.FindGameObjectWithTag("gc").GetComponent<GameController>();
+
     }
 
 	void Start () 
     {
+        //Work out which team this object is on.
+        switch(gameObject.tag)
+        {
+            case "bTeam":
+                enemyTag = "gTeam";
+                break;
+            case "gTeam":
+                enemyTag = "bTeam";
+                break;
+        }
+        eyes = GetComponentInChildren<FOV2DEyes>(); //Get vision eyes
+        visionCone = GetComponentInChildren<FOV2DVisionCone>(); //Get the vision cone
+        InvokeRepeating("Vision", 0, 0.2f);
 	}
 
 	void Update () {
 
-        Debug.DrawRay(transform.position + transform.up * 1.36f, transform.forward, Color.red,20f);
 	}
 
-    void OnTriggerStay(Collider other)
+    void Vision()
     {
+        enemySighted = false;
 
-        if (other.gameObject.tag == gameObject.tag)
+        foreach (RaycastHit hit in eyes.hits)
         {
-            return;
+            if (hit.transform && hit.transform.tag == enemyTag)
+            {
+                enemySighted = true;
+                enemy = hit.transform.gameObject;
+            }
         }
 
-        if (other.gameObject.tag == "bTeam" || other.gameObject.tag == "gTeam")
+        if(enemySighted == true)
         {
-     
-            enemySighted = false;
- 
-            // Create a vector from the enemy to the player and store the angle between it and forward.
-            Vector3 direction = other.transform.position - transform.position;
-            float angle = Vector3.Angle(direction, transform.forward);
-
-            // If the angle between forward and where the player is, is less than half the angle of view...
-            if (angle < fieldOfViewAngle * 0.5f)
-            {
-                RaycastHit hit;
-                Physics.Raycast(transform.position + transform.up *1.36f, direction, out hit, col.radius);
-                Debug.Log(hit.collider);
-                // ... and if a raycast towards the player hits something...
-                if (Physics.Raycast(transform.position + transform.up *1.36f, direction, out hit, col.radius))
-                {
-
-                    // ... and if the raycast hits the player...
-                    if (hit.collider == other.gameObject.GetComponent<CapsuleCollider>())
-                    {
-                        // ... the player is in sight.
-                        enemySighted = true;
-                        Shoot(direction);
-                    }
-                }
-            }
-
+            gameObject.transform.LookAt(enemy.transform.position);
+            Shoot((enemy.transform.position - transform.position).normalized);
         }
     }
+     
     void Shoot(Vector3 direction)
     {
-        if (lastShot + 3 > Time.realtimeSinceStartup)
+        if (lastShot + reFireRate > Time.realtimeSinceStartup)
             return;
 
         GameObject tBullet = gc.bQueue.Dequeue();
+        tBullet.SetActive(true);
+
+        Physics.IgnoreCollision(tBullet.GetComponent<Collider>(), GetComponent<Collider>());
+        Physics.IgnoreCollision(tBullet.GetComponent<Collider>(), tBullet.GetComponent<Collider>());
+
+        
         Rigidbody rb = tBullet.GetComponent<Rigidbody>();
-        tBullet.transform.position = (gameObject.transform.position + transform.up);
-        rb.AddForce(direction * 50f);
+        tBullet.transform.position = (gameObject.transform.position + transform.up + (transform.forward * 2.5f));
+        tBullet.transform.rotation = Quaternion.Euler(direction);
+        
+    
+        rb.AddForce(direction * bulletSpeed);
 
         lastShot = Time.realtimeSinceStartup;
     }
