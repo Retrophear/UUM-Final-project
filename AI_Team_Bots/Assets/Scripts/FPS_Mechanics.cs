@@ -20,6 +20,8 @@ public class FPS_Mechanics : MonoBehaviour {
         health = 200;
         gc = GameObject.FindGameObjectWithTag("gc").GetComponent<GameController>();
 
+        InvokeRepeating("CheckHP", 0, 0.4f);
+
     }
 
 	void Start () 
@@ -83,6 +85,15 @@ public class FPS_Mechanics : MonoBehaviour {
         rb.AddForce(direction * bulletSpeed);
 
         lastShot = Time.realtimeSinceStartup;
+    }
+
+    void CheckHP()
+    {
+        if(health <= 0)
+        {
+            CancelInvoke();
+            gameObject.SetActive(false);
+        }
     }
 
     
