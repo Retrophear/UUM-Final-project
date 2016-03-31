@@ -9,13 +9,17 @@ public class AI : BaseBehavior
 {
 
     public Transform goal;
+    public NavMeshAgent agent;
 
     //Memory//
     public Dictionary<GameObject, Vector3> friendlyTeam;
     public Dictionary<string, GameObject> squadRoles;
-    public NavMeshAgent agent;
-    
+    public States currentState;
+    public ImportantEvents currentKeyEvent;
     public GameObject personalGoal;
+    public GameObject supportTarget;
+
+
     void Awake()
     {
         squadRoles.Add("ObjectiveCarrier", null);
@@ -38,24 +42,44 @@ public class AI : BaseBehavior
         GetTeam();
         InvokeRepeating("CommunicatePosition", 0.4f, 1f);
 
-         agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
 
         if (personalGoal)
         {
             agent.destination = personalGoal.transform.position;
         }
+        InvokeRepeating("ExecuteBehaviour", 0.8f, 0.4f);
+
+        currentState = States.Squad;
+        currentKeyEvent = ImportantEvents.None;
+    }
+    void OnDisable()
+    {
+        CancelInvoke();
+        foreach (KeyValuePair<string, GameObject> sm in squadRoles) //Cycle through the squad roles
+        {
+            if (sm.Key == "ObjectiveCarrier" && sm.Value == gameObject) //If this object is the objective carrier
+            {
+                foreach (KeyValuePair<GameObject, Vector3> ft in friendlyTeam) //Loop through the friendly team
+                {
+                    if (ft.Key.activeInHierarchy) //Check if their active
+                    {
+                        ft.Key.GetComponent<AI>().currentKeyEvent = ImportantEvents.CarrierDead; //Inform them that OC is dead.
+                    }
+                }
+            }
+        }
+    }
+    void FixedUpdate()
+    {
+
+    }
+    public void OnReEnable()
+    {
+        InvokeRepeating("CommunicatePosition", 0.4f, 1f);
         InvokeRepeating("ExecuteBehaviour", 0.8f, 0.5f);
+        AssignSquad();
     }
-    void OnEnable()
-    {
-       
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void GetTeam()
     {
         friendlyTeam = new Dictionary<GameObject, Vector3>(); // Intialize GO List
@@ -70,20 +94,18 @@ public class AI : BaseBehavior
         }
 
         AssignSquad();
-        // teamLKP = new Vector3[friendlyTeam.Count]; //Intialize the teammate postion memory to the number of friendly bots
     }
 
     private void CommunicatePosition()
     {
-        //int squadPostion;
-
-        //squadPostion = Int32.Parse(Regex.Match(gameObject.name, @"\d+").Value);
         foreach (KeyValuePair<GameObject, Vector3> ob in friendlyTeam)
         {
             if (ob.Key != gameObject)
             {
-
-                ob.Key.GetComponent<AI>().friendlyTeam[gameObject] = gameObject.transform.position;
+                if (ob.Key.activeInHierarchy)
+                {
+                    ob.Key.GetComponent<AI>().friendlyTeam[gameObject] = gameObject.transform.position;
+                }
 
             }
         }
@@ -93,11 +115,24 @@ public class AI : BaseBehavior
     private void CommmunicateSquad(string sqRole)
     {
         squadRoles[sqRole] = gameObject;
+        var dictionaryBuffer = new List<string>(squadRoles.Keys);
+
+        foreach (var key in dictionaryBuffer)
+        {
+            if (squadRoles[key] == gameObject && key != sqRole)
+            {
+                squadRoles[key] = null;
+            }
+        }
         foreach (KeyValuePair<GameObject, Vector3> ob in friendlyTeam)
         {
             if (ob.Key != gameObject)
             {
                 ob.Key.GetComponent<AI>().squadRoles[sqRole] = gameObject;
+                if (sqRole == "ObjectiveCarrier" && ob.Key.GetComponent<AI>().currentKeyEvent == ImportantEvents.CarrierDead)
+                {
+                    ob.Key.GetComponent<AI>().currentKeyEvent = ImportantEvents.None;
+                }
             }
         }
     }
@@ -110,16 +145,23 @@ public class AI : BaseBehavior
         float tPos = 1000f;
         foreach (KeyValuePair<GameObject, Vector3> dis in friendlyTeam)
         {
-            if (tPos > (Vector3.Distance(dis.Value, goal.position)))
+            if (dis.Key.activeInHierarchy)
             {
-                tPos = Vector3.Distance(dis.Value, goal.position);
-                sqObjc = dis.Key;
+                if (tPos > (Vector3.Distance(dis.Value, goal.position)))
+                {
+                    tPos = Vector3.Distance(dis.Value, goal.position);
+                    sqObjc = dis.Key;
+                }
             }
         }
         if (tPos >= myPos)
-        {            
+        {
             CommmunicateSquad("ObjectiveCarrier");
             personalGoal = goal.gameObject;
+            if (currentKeyEvent == ImportantEvents.CarrierDead)
+            {
+                currentKeyEvent = ImportantEvents.None;
+            }
         }
         #endregion
 
@@ -133,11 +175,14 @@ public class AI : BaseBehavior
             tPos = 1000f;
             foreach (KeyValuePair<GameObject, Vector3> dis in friendlyTeam)
             {
-                if (!squadRoles.ContainsValue(dis.Key)) //Skip any already assigned squad members
+                if (dis.Key.activeInHierarchy)
                 {
-                    if (tPos > (Vector3.Distance(dis.Value, hPoint)))
+                    if (!squadRoles.ContainsValue(dis.Key)) //Skip any already assigned squad members
                     {
-                        tPos = Vector3.Distance(dis.Value, hPoint);
+                        if (tPos > (Vector3.Distance(dis.Value, hPoint)))
+                        {
+                            tPos = Vector3.Distance(dis.Value, hPoint);
+                        }
                     }
                 }
             }
@@ -156,11 +201,14 @@ public class AI : BaseBehavior
             tPos = 1000f;
             foreach (KeyValuePair<GameObject, Vector3> dis in friendlyTeam)
             {
-                if (!squadRoles.ContainsValue(dis.Key) && dis.Key != sqObjc) //Skip assigned AND skip the to-be-assigned OC
+                if (dis.Key.activeInHierarchy)
                 {
-                    if (tPos > (Vector3.Distance(dis.Value, sqObjc.transform.position)))
+                    if (!squadRoles.ContainsValue(dis.Key) && dis.Key != sqObjc) //Skip assigned AND skip the to-be-assigned OC
                     {
-                        tPos = Vector3.Distance(dis.Value, sqObjc.transform.position);
+                        if (tPos > (Vector3.Distance(dis.Value, sqObjc.transform.position)))
+                        {
+                            tPos = Vector3.Distance(dis.Value, sqObjc.transform.position);
+                        }
                     }
                 }
             }
@@ -207,41 +255,176 @@ public class AI : BaseBehavior
     }
     private void ExecuteBehaviour()
     {
-        string sqRole ="";
-        foreach(KeyValuePair<string, GameObject> go in squadRoles)
+        string sqRole = "";
+        SquadCleaner();
+        foreach (KeyValuePair<string, GameObject> go in squadRoles)
         {
-            if(go.Value == gameObject)
+            if (go.Value == gameObject)
             {
                 sqRole = go.Key;
             }
         }
-        switch(sqRole)
+        if (currentKeyEvent == ImportantEvents.CarrierDead)
         {
-            case "ObjectiveCarrier":
-                break;
-            case "Sniper":
-                break;
-            case "Attacker":
-                agent.SetDestination(goal.transform.position);
-                break;
-            case "Defender1":
-                if (goal.name == "GREENGOAL" || goal.name == "BLUEGOAL")
+            AssignSquad();
+        }
+        switch (currentState)
+        {
+            #region Squad Behaviours
+            case States.Squad:
+                switch (sqRole)
                 {
-                    Vector3 faceDirection = new Vector3(0, 0, 0);
-                    float dist = agent.remainingDistance;
-                    if (agent.remainingDistance < 5)
+                    case "ObjectiveCarrier":
+                        if (gameObject.transform.childCount > 1)
+                        {
+                            switch (gameObject.tag)
+                            {
+                                case "bTeam":
+                                    personalGoal = GameObject.Find("GREENGOAL");
+                                    agent.SetDestination(personalGoal.transform.position);
+                                    break;
+                                case "gTeam":
+                                    personalGoal = GameObject.Find("BLUEGOAL");
+                                    agent.SetDestination(personalGoal.transform.position);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (gameObject.tag)
+                            {
+                                case "bTeam":
+                                    personalGoal = GameObject.Find("BLUEGOAL");
+                                    agent.SetDestination(personalGoal.transform.position);
+                                    break;
+                                case "gTeam":
+                                    personalGoal = GameObject.Find("GREENGOAL");
+                                    agent.SetDestination(personalGoal.transform.position);
+                                    break;
+                            }
+                        }
+                        break;
+                    case "Sniper":
+                        break;
+                    case "Attacker":
+                        agent.SetDestination(personalGoal.transform.position);
+                        break;
+                    case "Defender1":
+                    case "Defender2":
+                        if (goal.name == "GREENGOAL" || goal.name == "BLUEGOAL")
+                        {
+                            Vector3 faceDirection = new Vector3(0, 0, 0);
+                            float dist = agent.remainingDistance;
+                            if (agent.remainingDistance < 5)
+                            {
+                                gameObject.transform.LookAt(faceDirection);
+                                agent.destination = RandomNavSphere((faceDirection - goal.transform.position) * 0.5f);
+                            }
+                        }
+                        break;
+                }
+                break;
+            #endregion
+            #region Attacking
+            case States.Attacking:
+                break;
+            #endregion
+            #region Supporting
+            case States.Supporting:
+                if(supportTarget != null)
+                {
+                    if (supportTarget.activeInHierarchy)
                     {
-                        agent.Stop();
-                        gameObject.transform.LookAt(faceDirection);
-
+                        SupportFire(supportTarget);
+                    }
+                    else
+                    {
+                        currentState = States.Squad;
                     }
                 }
                 break;
-            case "Defender2":
-
+            #endregion
+            #region Retrieving
+            case States.Retrieving:
                 break;
+            #endregion
+
+        }
+
+
+    }
+
+    public static Vector3 RandomNavSphere(Vector3 origin)
+    {
+        float dist = UnityEngine.Random.Range(1.0f, 15.0f);
+        Vector3 randDirection = UnityEngine.Random.insideUnitSphere * dist;
+
+        randDirection += origin;
+
+        NavMeshHit navHit;
+
+        NavMesh.SamplePosition(randDirection, out navHit, dist, NavMesh.AllAreas);
+
+        return navHit.position;
+    }
+    public void CallHelp(GameObject enemy)
+    {
+        foreach(KeyValuePair<GameObject,Vector3> ft in friendlyTeam)
+        {
+            if(Vector3.Distance(gameObject.transform.position, ft.Value) < 50) //Find all allys within 50 units
+            {
+                var aiScript = ft.Key.GetComponent<AI>(); //Get script reference
+                if(aiScript.currentState != States.Supporting) //Check if their already supporting
+                {
+                    aiScript.currentState = States.Supporting; //Tell them to support 
+                    aiScript.supportTarget = enemy; //Set their support target to current enemy
+                }
+            }
         }
     }
+    private void SupportFire(GameObject target)
+    {
+        gameObject.transform.LookAt(target.transform.position); //Look at the support target
+        if(Vector3.Distance(gameObject.transform.position,target.transform.position) > 35) //Check if their within 35 units
+        {
+            agent.destination = target.transform.position; //Travel towards it if it is out of range
+        }
+        else
+        {
+            agent.destination = RandomNavSphere(gameObject.transform.position); //Move around if within range
+        }
+
+    }
+    private void SquadCleaner()
+    {
+        var dictionaryBuffer = new List<string>(squadRoles.Keys);
+
+        foreach (var key in dictionaryBuffer)
+        {
+            if (squadRoles[key] != null && squadRoles[key].activeInHierarchy == false)
+            {
+                squadRoles[key] = null;
+            }
+        }
+    }
+
+
+   public enum States
+    {
+        Squad,
+        Attacking,
+        Supporting,
+        Retrieving,
+    };
+
+    public enum ImportantEvents
+    {
+        None,
+        CarrierDead,
+        FriendlyObjStolen,
+        UnderAttack
+
+    };
 }
 
 

@@ -12,6 +12,8 @@ public class FPS_Mechanics : MonoBehaviour {
     private GameController gc;
     private string enemyTag;
     private float lastShot;
+    private int lastHP;
+
     FOV2DEyes eyes;
     FOV2DVisionCone visionCone;
     void Awake()
@@ -39,13 +41,15 @@ public class FPS_Mechanics : MonoBehaviour {
         eyes = GetComponentInChildren<FOV2DEyes>(); //Get vision eyes
         visionCone = GetComponentInChildren<FOV2DVisionCone>(); //Get the vision cone
         InvokeRepeating("Vision", 0, 0.2f);
+
+        lastHP = health;
 	}
 
 	void Update () {
 
 	}
 
-    void Vision()
+    public void Vision()
     {
         enemySighted = false;
 
@@ -92,9 +96,40 @@ public class FPS_Mechanics : MonoBehaviour {
         if(health <= 0)
         {
             CancelInvoke();
+
+            try
+            {
+                var child = gameObject.transform.FindChild("BLUEGOAL");
+                if(child != null)
+                {
+                    child.transform.parent = null;
+                    child.transform.position -= new Vector3(0, 5, 0);
+                }
+                child = gameObject.transform.FindChild("GREENGOAL");
+                if(child != null)
+                {
+                    child.transform.parent = null;
+                    child.transform.position -= new Vector3(0, 5, 0);
+                }
+            }
+            catch
+            {
+
+            }
             gameObject.SetActive(false);
+        }
+
+
+        else if(health < lastHP)
+        {
+            gameObject.GetComponent<AI>().CallHelp(enemy);
+            lastHP = health;
         }
     }
 
-    
+    public void OnReEnable()
+    {
+        health = 200;
+        InvokeRepeating("CheckHP", 0, 0.4f);
+    }
 }

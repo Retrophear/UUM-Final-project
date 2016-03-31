@@ -94,6 +94,11 @@ public class GameController : MonoBehaviour
                 go.transform.position = blueSpawn.transform.position + new Vector3(rand, 0, 0);
                 go.transform.rotation = Quaternion.Euler(0,0,0);
 
+                var fpsScript = go.GetComponent<FPS_Mechanics>();
+                fpsScript.OnReEnable();
+
+                var aiScript = go.GetComponent<AI>();
+                aiScript.OnReEnable();
             }
         }
         foreach (GameObject go in grnBotPool) //Respawn all green bots
@@ -104,6 +109,14 @@ public class GameController : MonoBehaviour
                 rand = rnd.Next(0, 50);
                 go.transform.position = greenSpawn.transform.position +  new Vector3(rand, 0, 0);
                 go.transform.rotation = Quaternion.Euler(0, 180, 0);
+
+                var fpsScript = go.GetComponent<FPS_Mechanics>();
+                fpsScript.health = 200;
+                fpsScript.InvokeRepeating("Vision", 0, 0.2f);
+
+                var aiScript = go.GetComponent<AI>();
+                aiScript.OnReEnable();
+                
 
             }
         }
