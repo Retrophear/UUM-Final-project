@@ -2,23 +2,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using FullInspector;
 
 public class AI : BaseBehavior
 {
-
     public Transform goal;
     public NavMeshAgent agent;
 
     //Memory//
-    public Dictionary<GameObject, Vector3> friendlyTeam;
-    public Dictionary<string, GameObject> squadRoles;
-    public States currentState;
-    public ImportantEvents currentKeyEvent;
-    public GameObject personalGoal;
-    public GameObject supportTarget;
-
+    public Dictionary<GameObject, Vector3> friendlyTeam; //Holds all members of the friendly team and their last communicated postion
+    public Dictionary<string, GameObject> squadRoles; //Holds all the squad roles and who currently is assigned to them
+    public States currentState; //Current state
+    public ImportantEvents currentKeyEvent; //Current key event
+    public GameObject personalGoal; //Bots personal goal dictated by their squad role
+    public GameObject supportTarget; //Target if the bot is asked to assist another teammate under attack
+    public GameObject importantTarget; //Target if the teams flag is taken
 
     void Awake()
     {
@@ -70,16 +68,9 @@ public class AI : BaseBehavior
             }
         }
     }
-    void FixedUpdate()
-    {
 
-    }
-    public void OnReEnable()
-    {
-        InvokeRepeating("CommunicatePosition", 0.4f, 1f);
-        InvokeRepeating("ExecuteBehaviour", 0.8f, 0.5f);
-        AssignSquad();
-    }
+
+    /* PRIVATE METHODS*/
     private void GetTeam()
     {
         friendlyTeam = new Dictionary<GameObject, Vector3>(); // Intialize GO List
@@ -95,7 +86,6 @@ public class AI : BaseBehavior
 
         AssignSquad();
     }
-
     private void CommunicatePosition()
     {
         foreach (KeyValuePair<GameObject, Vector3> ob in friendlyTeam)
@@ -111,7 +101,6 @@ public class AI : BaseBehavior
         }
 
     }
-
     private void CommmunicateSquad(string sqRole)
     {
         squadRoles[sqRole] = gameObject;
@@ -169,9 +158,18 @@ public class AI : BaseBehavior
         //Determine whos the sniper
         if (!squadRoles.ContainsValue(gameObject) && squadRoles["Sniper"] == null)//Check if this object has already been assigned to a role
         {
-            Vector3 hPoint = GameObject.Find("HighPoint").transform.position;
+            GameObject hPoint = null; 
+            switch(gameObject.tag)
+            { 
+                case "bTeam":
+                 hPoint = GameObject.Find("HighPointBlue");
+                 break;
+                case "gTeam":
+                 hPoint = GameObject.Find("HighPointGreen");
+                 break;
+            }
 
-            myPos = Vector3.Distance(transform.position, hPoint);
+            myPos = Vector3.Distance(transform.position, hPoint.transform.position);
             tPos = 1000f;
             foreach (KeyValuePair<GameObject, Vector3> dis in friendlyTeam)
             {
@@ -179,9 +177,9 @@ public class AI : BaseBehavior
                 {
                     if (!squadRoles.ContainsValue(dis.Key)) //Skip any already assigned squad members
                     {
-                        if (tPos > (Vector3.Distance(dis.Value, hPoint)))
+                        if (tPos > (Vector3.Distance(dis.Value, hPoint.transform.position)))
                         {
-                            tPos = Vector3.Distance(dis.Value, hPoint);
+                            tPos = Vector3.Distance(dis.Value, hPoint.transform.position);
                         }
                     }
                 }
@@ -189,7 +187,7 @@ public class AI : BaseBehavior
             if (tPos >= myPos)
             {
                 CommmunicateSquad("Sniper");
-                personalGoal = GameObject.Find("HighPoint");
+                personalGoal = hPoint;
             }
         }
         #endregion
@@ -268,6 +266,10 @@ public class AI : BaseBehavior
         {
             AssignSquad();
         }
+        if(currentKeyEvent == ImportantEvents.FriendlyObjStolen && sqRole.Contains("Defender"))
+        {
+            currentState = States.Retrieving;
+        }
         switch (currentState)
         {
             #region Squad Behaviours
@@ -305,6 +307,7 @@ public class AI : BaseBehavior
                         }
                         break;
                     case "Sniper":
+
                         break;
                     case "Attacker":
                         agent.SetDestination(personalGoal.transform.position);
@@ -331,7 +334,7 @@ public class AI : BaseBehavior
             #endregion
             #region Supporting
             case States.Supporting:
-                if(supportTarget != null)
+                if (supportTarget != null)
                 {
                     if (supportTarget.activeInHierarchy)
                     {
@@ -346,6 +349,7 @@ public class AI : BaseBehavior
             #endregion
             #region Retrieving
             case States.Retrieving:
+                agent.destination = importantTarget.transform.position;
                 break;
             #endregion
 
@@ -353,39 +357,10 @@ public class AI : BaseBehavior
 
 
     }
-
-    public static Vector3 RandomNavSphere(Vector3 origin)
-    {
-        float dist = UnityEngine.Random.Range(1.0f, 15.0f);
-        Vector3 randDirection = UnityEngine.Random.insideUnitSphere * dist;
-
-        randDirection += origin;
-
-        NavMeshHit navHit;
-
-        NavMesh.SamplePosition(randDirection, out navHit, dist, NavMesh.AllAreas);
-
-        return navHit.position;
-    }
-    public void CallHelp(GameObject enemy)
-    {
-        foreach(KeyValuePair<GameObject,Vector3> ft in friendlyTeam)
-        {
-            if(Vector3.Distance(gameObject.transform.position, ft.Value) < 50) //Find all allys within 50 units
-            {
-                var aiScript = ft.Key.GetComponent<AI>(); //Get script reference
-                if(aiScript.currentState != States.Supporting) //Check if their already supporting
-                {
-                    aiScript.currentState = States.Supporting; //Tell them to support 
-                    aiScript.supportTarget = enemy; //Set their support target to current enemy
-                }
-            }
-        }
-    }
     private void SupportFire(GameObject target)
     {
         gameObject.transform.LookAt(target.transform.position); //Look at the support target
-        if(Vector3.Distance(gameObject.transform.position,target.transform.position) > 35) //Check if their within 35 units
+        if (Vector3.Distance(gameObject.transform.position, target.transform.position) > 35) //Check if their within 35 units
         {
             agent.destination = target.transform.position; //Travel towards it if it is out of range
         }
@@ -408,15 +383,50 @@ public class AI : BaseBehavior
         }
     }
 
+    /*PUBLIC METHODS*/
+    public static Vector3 RandomNavSphere(Vector3 origin)
+    {
+        float dist = UnityEngine.Random.Range(1.0f, 15.0f);
+        Vector3 randDirection = UnityEngine.Random.insideUnitSphere * dist;
 
-   public enum States
+        randDirection += origin;
+
+        NavMeshHit navHit;
+
+        NavMesh.SamplePosition(randDirection, out navHit, dist, NavMesh.AllAreas);
+
+        return navHit.position;
+    }
+    public void CallHelp(GameObject enemy)
+    {
+        foreach (KeyValuePair<GameObject, Vector3> ft in friendlyTeam)
+        {
+            if (Vector3.Distance(gameObject.transform.position, ft.Value) < 50) //Find all allys within 50 units
+            {
+                var aiScript = ft.Key.GetComponent<AI>(); //Get script reference
+                if (aiScript.currentState != States.Supporting) //Check if their already supporting
+                {
+                    aiScript.currentState = States.Supporting; //Tell them to support 
+                    aiScript.supportTarget = enemy; //Set their support target to current enemy
+                }
+            }
+        }
+    }
+    public void OnReEnable()
+    {
+        InvokeRepeating("CommunicatePosition", 0.4f, 1f);
+        InvokeRepeating("ExecuteBehaviour", 0.8f, 0.5f);
+        AssignSquad();
+    }
+
+    /*ENUMS*/
+    public enum States
     {
         Squad,
         Attacking,
         Supporting,
         Retrieving,
     };
-
     public enum ImportantEvents
     {
         None,

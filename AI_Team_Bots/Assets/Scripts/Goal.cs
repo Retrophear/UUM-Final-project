@@ -15,7 +15,7 @@ public class Goal : MonoBehaviour
 
     void ResetPostion()
     {
-        if(childObj != null)
+        if (childObj != null)
         {
             childObj.parent = null;
             childObj.transform.position = childObj.GetComponent<Goal>().startPosition;
@@ -23,10 +23,18 @@ public class Goal : MonoBehaviour
         }
         gameObject.transform.parent = null;
         gameObject.transform.position = startPosition;
+        if (gameObject.name == "BLUEGOAL")
+        {
+            InformTeam("gTeam", false);
+        }
+        else if (gameObject.name == "GREENGOAL")
+        {
+            InformTeam("bTeam", false);
+        }
     }
     void OnTriggerEnter(Collider other)
     {
-        switch(thisTag)
+        switch (thisTag)
         {
             case "BLUEGOAL": //Bluegoal is the object placed on the green side
                 {
@@ -34,21 +42,27 @@ public class Goal : MonoBehaviour
                     {
                         gameObject.transform.parent = other.gameObject.transform;
                         gameObject.transform.position = other.transform.position + new Vector3(0, 5, 0);
+                        InformTeam("gTeam", true);
                     }
-                    else if(other.tag == "gTeam" && other.transform.FindChild("GREENGOAL") != null)
+                    else if (other.tag == "gTeam" && other.transform.FindChild("GREENGOAL") != null)
                     {
                         Debug.Log("SCORE");
                         childObj = other.transform.FindChild("GREENGOAL");
+                        ResetPostion();
+                    }
+                    else if (other.tag == "gTeam" && gameObject.transform.parent == null)
+                    {
                         ResetPostion();
                     }
                     break;
                 }
             case "GREENGOAL": //Green goal is placed on the blue side
                 {
-                    if(other.tag == "gTeam") //Check if tag is of green team
+                    if (other.tag == "gTeam") //Check if tag is of green team
                     {
                         gameObject.transform.parent = other.gameObject.transform; //Add it as a child object to the bot
                         gameObject.transform.position = other.transform.position + new Vector3(0, 5, 0);
+                        InformTeam("bTeam", true);
                     }
                     else if (other.tag == "bTeam" && other.transform.FindChild("BLUEGOAL") != null) //If the bot has made it to the goal with opposing teams flag
                     {
@@ -56,13 +70,43 @@ public class Goal : MonoBehaviour
                         childObj = other.transform.FindChild("BLUEGOAL");
                         ResetPostion();
                     }
+                    else if (other.tag == "bTeam" && gameObject.transform.parent == null)
+                    {
+                        ResetPostion();
+                    }
+
                     break;
                 }
         }
 
-        
-     
 
 
+
+
+    }
+
+    void InformTeam(string team, bool stolen)
+    {
+        var teamMembers = GameObject.FindGameObjectsWithTag(team);
+        foreach (GameObject go in teamMembers)
+        {
+            if (stolen == true)
+            {
+                go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.FriendlyObjStolen;
+                go.GetComponent<AI>().importantTarget = gameObject;
+            }
+            else if (stolen == false)
+            {
+                if (go.GetComponent<AI>().currentKeyEvent == AI.ImportantEvents.FriendlyObjStolen)
+                {
+                    go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.None;
+                }
+                if (go.GetComponent<AI>().currentState == AI.States.Retrieving)
+                {
+                    go.GetComponent<AI>().currentState = AI.States.Squad;
+                }
+                go.GetComponent<AI>().importantTarget = null;
+            }
+        }
     }
 }
