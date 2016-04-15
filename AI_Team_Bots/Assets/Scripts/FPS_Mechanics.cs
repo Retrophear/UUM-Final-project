@@ -4,18 +4,15 @@ using System.Collections;
 public class FPS_Mechanics : MonoBehaviour {
 
     public int health;
-    public bool enemySighted;
     public GameObject enemy;
     public float reFireRate;
     public float bulletSpeed;
-
+    public Animator anim;
     private GameController gc;
-    private string enemyTag;
     private float lastShot;
     private int lastHP;
 
-    FOV2DEyes eyes;
-    FOV2DVisionCone visionCone;
+
     void Awake()
     {
         lastShot = 0;
@@ -28,48 +25,11 @@ public class FPS_Mechanics : MonoBehaviour {
 
 	void Start () 
     {
-        //Work out which team this object is on.
-        switch(gameObject.tag)
-        {
-            case "bTeam":
-                enemyTag = "gTeam";
-                break;
-            case "gTeam":
-                enemyTag = "bTeam";
-                break;
-        }
-        eyes = GetComponentInChildren<FOV2DEyes>(); //Get vision eyes
-        visionCone = GetComponentInChildren<FOV2DVisionCone>(); //Get the vision cone
-        InvokeRepeating("Vision", 0, 0.2f);
-
-        lastHP = health;
+         lastHP = health;   
 	}
 
-	void Update () {
-
-	}
-
-    public void Vision()
-    {
-        enemySighted = false;
-
-        foreach (RaycastHit hit in eyes.hits)
-        {
-            if (hit.transform && hit.transform.tag == enemyTag)
-            {
-                enemySighted = true;
-                enemy = hit.transform.gameObject;
-            }
-        }
-
-        if(enemySighted == true)
-        {
-            gameObject.transform.LookAt(enemy.transform.position);
-            Shoot((enemy.transform.position - transform.position).normalized);
-        }
-    }
      
-    void Shoot(Vector3 direction)
+    public void Shoot(Vector3 direction)
     {
         if (lastShot + reFireRate > Time.realtimeSinceStartup)
             return;
@@ -90,7 +50,7 @@ public class FPS_Mechanics : MonoBehaviour {
 
         lastShot = Time.realtimeSinceStartup;
     }
-
+    
     void CheckHP()
     {
         if(health <= 0)

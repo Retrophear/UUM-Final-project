@@ -67,6 +67,7 @@ public class GameController : MonoBehaviour
         dTime = 0.0f;
         
     }
+   
 	void Start () {
         InvokeRepeating("Spawn", 10f, 10f);
       
@@ -74,8 +75,11 @@ public class GameController : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        dTime += (Time.deltaTime - dTime) * 0.1f;
-        SystemStats();
+        if (Time.timeScale != 0)
+        {
+            dTime += (Time.deltaTime - dTime) * 0.1f;
+            SystemStats();
+        }
 	}
 
     public GameObject RequestBullet()
@@ -111,8 +115,8 @@ public class GameController : MonoBehaviour
                 go.transform.rotation = Quaternion.Euler(0, 180, 0);
 
                 var fpsScript = go.GetComponent<FPS_Mechanics>();
-                fpsScript.health = 200;
-                fpsScript.InvokeRepeating("Vision", 0, 0.2f);
+                fpsScript.OnReEnable();
+ 
 
                 var aiScript = go.GetComponent<AI>();
                 aiScript.OnReEnable();

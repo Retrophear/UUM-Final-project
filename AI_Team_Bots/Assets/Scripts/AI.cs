@@ -76,7 +76,7 @@ public class AI : BaseBehavior
         friendlyTeam = new Dictionary<GameObject, Vector3>(); // Intialize GO List
         var t = GameObject.FindGameObjectsWithTag(gameObject.tag); //Find all friendly bots
 
-        foreach (GameObject gob in t) //Loop and add each bot tto the list
+        foreach (GameObject gob in t) //Loop and add each bot to the list
         {
             if (gob != gameObject)
             {
@@ -117,6 +117,15 @@ public class AI : BaseBehavior
         {
             if (ob.Key != gameObject)
             {
+                var tmSqRole = ob.Key.GetComponent<AI>().squadRoles;
+                dictionaryBuffer = new List<string>(tmSqRole.Keys);
+                foreach(var key in dictionaryBuffer)
+                {
+                    if(tmSqRole[key] == gameObject && key != sqRole)
+                    {
+                        tmSqRole[key] = null;
+                    }
+                }
                 ob.Key.GetComponent<AI>().squadRoles[sqRole] = gameObject;
                 if (sqRole == "ObjectiveCarrier" && ob.Key.GetComponent<AI>().currentKeyEvent == ImportantEvents.CarrierDead)
                 {
@@ -380,6 +389,7 @@ public class AI : BaseBehavior
             {
                 squadRoles[key] = null;
             }
+
         }
     }
 
@@ -414,9 +424,12 @@ public class AI : BaseBehavior
     }
     public void OnReEnable()
     {
+        currentKeyEvent = ImportantEvents.None;
+        currentState = States.Squad;
+        SquadCleaner();
+        AssignSquad();
         InvokeRepeating("CommunicatePosition", 0.4f, 1f);
         InvokeRepeating("ExecuteBehaviour", 0.8f, 0.5f);
-        AssignSquad();
     }
 
     /*ENUMS*/
