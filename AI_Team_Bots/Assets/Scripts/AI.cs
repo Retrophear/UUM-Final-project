@@ -2,29 +2,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using FullInspector;
+//using FullInspector;
 
-public class AI : BaseBehavior
+public class AI : MonoBehaviour
 {
     public Transform goal;
     public NavMeshAgent agent;
-
-    //Memory//
     public Dictionary<GameObject, Vector3> friendlyTeam; //Holds all members of the friendly team and their last communicated postion
     public Dictionary<string, GameObject> squadRoles; //Holds all the squad roles and who currently is assigned to them
     public States currentState; //Current state
     public ImportantEvents currentKeyEvent; //Current key event
     public GameObject personalGoal; //Bots personal goal dictated by their squad role
     public GameObject supportTarget; //Target if the bot is asked to assist another teammate under attack
-    public GameObject importantTarget; //Target if the teams flag is taken
+    public Transform importantTarget; //Last known location of friendly flag
+    public GameObject attackTarget; //Target for the AI to attack
+    public bool objStolen;
+    public float targetUpdated; 
 
     void Awake()
     {
+        squadRoles = new Dictionary<string, GameObject>();
         squadRoles.Add("ObjectiveCarrier", null);
         squadRoles.Add("Sniper", null);
         squadRoles.Add("Attacker", null);
         squadRoles.Add("Defender1", null);
         squadRoles.Add("Defender2", null);
+        if (gameObject.name.Contains("blu"))
+        {
+            GameObject.Find("UI").GetComponent<UI>().botList.Add(gameObject);
+
+        }
     }
     void Start()
     {
@@ -47,7 +54,7 @@ public class AI : BaseBehavior
             agent.destination = personalGoal.transform.position;
         }
         InvokeRepeating("ExecuteBehaviour", 0.8f, 0.4f);
-
+        InvokeRepeating("CheckSquad", 4f, 0.5f);
         currentState = States.Squad;
         currentKeyEvent = ImportantEvents.None;
     }
@@ -131,6 +138,17 @@ public class AI : BaseBehavior
                 {
                     ob.Key.GetComponent<AI>().currentKeyEvent = ImportantEvents.None;
                 }
+            }
+        }
+    }
+    private void CommunicateImportantLocation(Transform pos, float time)
+    {
+        foreach(KeyValuePair<GameObject,Vector3> ft in friendlyTeam)
+        {
+            if(ft.Key.GetComponent<AI>().targetUpdated < time)
+            {
+                ft.Key.GetComponent<AI>().targetUpdated = time;
+                ft.Key.GetComponent<AI>().importantTarget = pos;
             }
         }
     }
@@ -316,10 +334,28 @@ public class AI : BaseBehavior
                         }
                         break;
                     case "Sniper":
-
+                        if(personalGoal.name == "HighPointBlue" || personalGoal.name == "HighPointGreen")
+                        {
+                            if(agent.remainingDistance < 5)
+                            {
+                                agent.destination = RandomNavSphere(personalGoal.transform.position);
+       
+                            }
+                        }
                         break;
                     case "Attacker":
-                        agent.SetDestination(personalGoal.transform.position);
+                        if (squadRoles["ObjectiveCarrier"] != personalGoal)
+                        {
+                            personalGoal = squadRoles["ObjectiveCarrier"];
+                        }
+                        if (personalGoal.activeInHierarchy && personalGoal != null)
+                        {
+                            agent.SetDestination(personalGoal.transform.position);
+                        }
+                        else
+                        {
+                            AssignSquad();
+                        }
                         break;
                     case "Defender1":
                     case "Defender2":
@@ -339,6 +375,17 @@ public class AI : BaseBehavior
             #endregion
             #region Attacking
             case States.Attacking:
+                if (attackTarget != null)
+                {
+                    if (attackTarget.activeInHierarchy)
+                    {
+                        SupportFire(attackTarget);
+                    }
+                    else
+                    {
+                        currentState = States.Squad;
+                    }
+                }
                 break;
             #endregion
             #region Supporting
@@ -354,6 +401,11 @@ public class AI : BaseBehavior
                         currentState = States.Squad;
                     }
                 }
+                else
+                {
+                    currentState = States.Squad;
+                }
+                
                 break;
             #endregion
             #region Retrieving
@@ -392,7 +444,13 @@ public class AI : BaseBehavior
 
         }
     }
-
+    private void CheckSquad()
+    {
+        if(!squadRoles.ContainsValue(gameObject))
+        {
+            AssignSquad();
+        }
+    }
     /*PUBLIC METHODS*/
     public static Vector3 RandomNavSphere(Vector3 origin)
     {
@@ -424,12 +482,29 @@ public class AI : BaseBehavior
     }
     public void OnReEnable()
     {
-        currentKeyEvent = ImportantEvents.None;
+        if(objStolen == true)
+        {
+            currentKeyEvent = ImportantEvents.FriendlyObjStolen;
+        }
+        else
+        {
+            currentKeyEvent = ImportantEvents.None;
+        }
         currentState = States.Squad;
         SquadCleaner();
         AssignSquad();
         InvokeRepeating("CommunicatePosition", 0.4f, 1f);
         InvokeRepeating("ExecuteBehaviour", 0.8f, 0.5f);
+        InvokeRepeating("CheckSquad", 4f, 0.5f);
+    }
+    public void UpdateLocation(Transform pos)
+    {
+        if(Time.realtimeSinceStartup > targetUpdated)
+        {
+            importantTarget = pos;
+            targetUpdated = Time.realtimeSinceStartup;
+            CommunicateImportantLocation(pos,Time.realtimeSinceStartup);
+        }
     }
 
     /*ENUMS*/

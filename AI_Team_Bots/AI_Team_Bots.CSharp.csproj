@@ -67,30 +67,8 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
-    <Reference Include="FullInspector-Core">
-      <HintPath>Assets\FullInspector2\DLLs\FullInspector-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Assets\FullInspector2\Serializers\JsonNet\DLLs\Newtonsoft.Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\FieldOfView2D\Scripts\FOV2DEyes.cs" />
-    <Compile Include="Assets\FieldOfView2D\Scripts\FOV2DVisionCone.cs" />
-    <Compile Include="Assets\FieldOfView2D\Scripts\SampleScript\GuardSample.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\Converters\ColorConverter.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\Converters\UnityObjectConverter.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\Converters\VectorConverters.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\DLLs\BuildErrorOnAOT.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\JsonNetMetadata.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\JsonNetOperatorHack.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\JsonNetSerializer.cs" />
-    <Compile Include="Assets\FullInspector2\Serializers\JsonNet\JsonNetSettings.cs" />
-    <Compile Include="Assets\FullInspector2_Generated\BaseBehavior.cs" />
-    <Compile Include="Assets\FullInspector2_Generated\BaseNetworkBehavior.cs" />
-    <Compile Include="Assets\FullInspector2_Generated\BaseScriptableObject.cs" />
-    <Compile Include="Assets\FullInspector2_Generated\SharedInstance.cs" />
-    <Compile Include="Assets\FullInspector2_Generated\fiLoadedSerializers.cs" />
     <Compile Include="Assets\Scripts\AI.cs" />
     <Compile Include="Assets\Scripts\AnimatorSetup.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
@@ -98,17 +76,12 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Goal.cs" />
     <Compile Include="Assets\Scripts\Test.cs" />
+    <Compile Include="Assets\Scripts\TestAI.cs" />
     <Compile Include="Assets\Scripts\UI.cs" />
     <Compile Include="Assets\Scripts\Vision.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ColorfulButtons\Credits.txt" />
-    <None Include="Assets\FullInspector2\DLLs\Editor\FullInspector-Editor.xml" />
-    <None Include="Assets\FullInspector2\DLLs\FullInspector-Core.xml" />
-    <None Include="Assets\FullInspector2\README.txt" />
-    <None Include="Assets\FullInspector2\Serializers\JsonNet\DLLs\Newtonsoft.Json.xml" />
-    <None Include="Assets\FullInspector2\Serializers\JsonNet\DLLs\README.txt" />
-    <None Include="Assets\FullInspector2\changelog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>

@@ -33,6 +33,7 @@ GameObject:
   - 195: {fileID: 19562150}
   - 114: {fileID: 11493656}
   - 54: {fileID: 5414572}
+  - 114: {fileID: 11484804}
   m_Layer: 9
   m_Name: grnBotT
   m_TagString: gTeam
@@ -132,22 +133,11 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 168780}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4412cc87c87196a4da419ae9a39985df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _objectReferences: []
-  _serializedStateKeys:
-  - friendlyTeam
-  - squadRoles
-  - currentState
-  - currentKeyEvent
-  _serializedStateValues:
-  - '{}'
-  - '{}'
-  - '"Squad"'
-  - '"None"'
   goal: {fileID: 0}
   agent: {fileID: 0}
   currentState: 0
@@ -155,6 +145,9 @@ MonoBehaviour:
   personalGoal: {fileID: 0}
   supportTarget: {fileID: 0}
   importantTarget: {fileID: 0}
+  attackTarget: {fileID: 0}
+  objStolen: 0
+  targetUpdated: 0
 --- !u!114 &11459748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -168,6 +161,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   col: {fileID: 13579290}
   fov: 110
+--- !u!114 &11484804
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 168780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab525bd382008c46abdd35f9b1ef904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goal: {fileID: 0}
+  agent: {fileID: 0}
+  currentState: 0
 --- !u!114 &11493656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -263,6 +270,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_IsKinematic
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

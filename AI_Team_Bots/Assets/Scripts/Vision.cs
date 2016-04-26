@@ -6,6 +6,7 @@ public class Vision : MonoBehaviour {
     public float fov;
 
     private FPS_Mechanics fpsScript;
+    private AI aiScript;
     private string enemyTag;
 
     void Start()
@@ -22,14 +23,36 @@ public class Vision : MonoBehaviour {
         }
 
         fpsScript = GetComponentInParent<FPS_Mechanics>();
+        if (!GetComponent<TestAI>())
+        {
+            aiScript = GetComponentInParent<AI>();
+        }
     }
-
+    void OnTriggerEnter(Collider other)
+    {
+        if (!GetComponentInParent<TestAI>())
+        {
+            if (enemyTag == "gTeam" && other.name == "GREENGOAL")
+            {
+                aiScript.UpdateLocation(other.transform);
+            }
+            if (enemyTag == "bTeam" && other.name == "BLUEGOAL")
+            {
+                aiScript.UpdateLocation(other.transform);
+            }
+        }
+    }
     void OnTriggerStay(Collider other)
     {
         if(other.gameObject.tag == enemyTag)
         {
             CheckVision(other.gameObject);
         }
+ 
+    }
+    void OnTriggerExit(Collider other)
+    {
+
     }
     private void CheckVision(GameObject target)
     {
@@ -43,6 +66,11 @@ public class Vision : MonoBehaviour {
                 if (hit.transform.gameObject.tag == enemyTag) //If enemy is seen
                 {
                     fpsScript.Shoot(direction.normalized); //Call the fps script and shoot
+                    if (!GetComponentInParent<TestAI>())
+                    {
+                        aiScript.currentState = AI.States.Attacking; //Set the state to attacking
+                        aiScript.attackTarget = target;
+                    }
                 }
             }
         }

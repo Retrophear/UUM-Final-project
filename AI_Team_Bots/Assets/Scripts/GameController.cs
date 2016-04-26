@@ -50,14 +50,14 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i<botsPerTeam; i++)// Blue bot spawn
         {
-            rand = rnd.Next(0, 50);
+            rand = rnd.Next(0, 100);
             obj =  Instantiate(bluBot, blueSpawn.transform.position + new Vector3(rand,0,0), Quaternion.Euler(0,0,0)) as GameObject;
             obj.name = "BlueBot " + i;
             bluBotPool.Add(obj);
         }
         for (int i = 0; i < botsPerTeam; i++)// Green bot spawn
         {
-            rand = rnd.Next(0, 50);
+            rand = rnd.Next(0, 100);
             obj = Instantiate(grnBot, greenSpawn.transform.position + new Vector3(rand, 0, 0), Quaternion.Euler(0,180,0)) as GameObject;
             obj.name = "GreenBot " + i;
             grnBotPool.Add(obj);
@@ -116,10 +116,16 @@ public class GameController : MonoBehaviour
 
                 var fpsScript = go.GetComponent<FPS_Mechanics>();
                 fpsScript.OnReEnable();
- 
 
-                var aiScript = go.GetComponent<AI>();
-                aiScript.OnReEnable();
+                if (!go.GetComponent<TestAI>())
+                {
+                    var aiScript = go.GetComponent<AI>();
+                    aiScript.OnReEnable();
+                }
+                else
+                {
+                    go.GetComponent<TestAI>().ReEnable();
+                }
                 
 
             }

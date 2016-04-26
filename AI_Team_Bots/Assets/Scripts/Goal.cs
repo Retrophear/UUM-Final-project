@@ -6,6 +6,8 @@ public class Goal : MonoBehaviour
     private string thisTag;
     public Vector3 startPosition;
     private Transform childObj;
+
+
     void Start()
     {
         thisTag = gameObject.name;
@@ -46,7 +48,7 @@ public class Goal : MonoBehaviour
                     }
                     else if (other.tag == "gTeam" && other.transform.FindChild("GREENGOAL") != null)
                     {
-                        Debug.Log("SCORE");
+                        GameObject.Find("UI").GetComponent<UI>().grnScore++;
                         childObj = other.transform.FindChild("GREENGOAL");
                         ResetPostion();
                     }
@@ -66,7 +68,7 @@ public class Goal : MonoBehaviour
                     }
                     else if (other.tag == "bTeam" && other.transform.FindChild("BLUEGOAL") != null) //If the bot has made it to the goal with opposing teams flag
                     {
-                        Debug.Log("SCORE");
+                        GameObject.Find("UI").GetComponent<UI>().bluScore++;
                         childObj = other.transform.FindChild("BLUEGOAL");
                         ResetPostion();
                     }
@@ -93,10 +95,11 @@ public class Goal : MonoBehaviour
             if (stolen == true)
             {
                 go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.FriendlyObjStolen;
-                go.GetComponent<AI>().importantTarget = gameObject;
+                go.GetComponent<AI>().objStolen = true;
             }
             else if (stolen == false)
             {
+                go.GetComponent<AI>().objStolen = false;
                 if (go.GetComponent<AI>().currentKeyEvent == AI.ImportantEvents.FriendlyObjStolen)
                 {
                     go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.None;
@@ -105,7 +108,6 @@ public class Goal : MonoBehaviour
                 {
                     go.GetComponent<AI>().currentState = AI.States.Squad;
                 }
-                go.GetComponent<AI>().importantTarget = null;
             }
         }
     }

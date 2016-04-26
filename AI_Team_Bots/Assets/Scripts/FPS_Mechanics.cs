@@ -82,6 +82,10 @@ public class FPS_Mechanics : MonoBehaviour {
 
         else if(health < lastHP)
         {
+            if(gameObject.GetComponent<TestAI>())
+            {
+                return;
+            }
             gameObject.GetComponent<AI>().CallHelp(enemy);
             lastHP = health;
         }
