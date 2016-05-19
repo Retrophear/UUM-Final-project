@@ -25,7 +25,8 @@ public class FPS_Mechanics : MonoBehaviour {
 
 	void Start () 
     {
-         lastHP = health;   
+         lastHP = health;
+         anim.speed = 0.6f;
 	}
 
      
@@ -33,22 +34,29 @@ public class FPS_Mechanics : MonoBehaviour {
     {
         if (lastShot + reFireRate > Time.realtimeSinceStartup)
             return;
-
+        if(anim != null)
+        {
+            anim.SetBool("Shooting", true);
+        }
         GameObject tBullet = gc.bQueue.Dequeue();
         tBullet.SetActive(true);
-
+        tBullet.GetComponent<Bullet>().time = 8f;
         Physics.IgnoreCollision(tBullet.GetComponent<Collider>(), GetComponent<Collider>());
         Physics.IgnoreCollision(tBullet.GetComponent<Collider>(), tBullet.GetComponent<Collider>());
 
         
         Rigidbody rb = tBullet.GetComponent<Rigidbody>();
-        tBullet.transform.position = (gameObject.transform.position + transform.up + (transform.forward * 2.5f));
+        tBullet.transform.position = (gameObject.transform.position + (transform.up * 8f)  + (transform.forward * 2.5f));
         tBullet.transform.rotation = Quaternion.Euler(direction);
         
     
         rb.AddForce(direction * bulletSpeed);
 
         lastShot = Time.realtimeSinceStartup;
+        if (anim != null)
+        {
+            anim.SetBool("Shooting", false);
+        }
     }
     
     void CheckHP()
@@ -76,17 +84,28 @@ public class FPS_Mechanics : MonoBehaviour {
             {
 
             }
+            if(gameObject.tag == "bTeam")
+            {
+                GameObject.Find("UI").GetComponent<UI>().bluDeaths++;
+            }
+            if (gameObject.tag == "gTeam")
+            {
+                GameObject.Find("UI").GetComponent<UI>().grnDeaths++;
+            }
             gameObject.SetActive(false);
         }
 
 
         else if(health < lastHP)
         {
-            if(gameObject.GetComponent<TestAI>())
+            if (gameObject.GetComponent<TestAI>())
             {
-                return;
+                
             }
-            gameObject.GetComponent<AI>().CallHelp(enemy);
+            else
+            {
+                gameObject.GetComponent<AI>().CallHelp(enemy);
+            }
             lastHP = health;
         }
     }

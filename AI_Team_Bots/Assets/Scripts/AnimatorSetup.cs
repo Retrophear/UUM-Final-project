@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//Taken from Unity Tutorial
+//Unity Technologies
+using UnityEngine;
 using System.Collections;
 
 public class AnimatorSetup

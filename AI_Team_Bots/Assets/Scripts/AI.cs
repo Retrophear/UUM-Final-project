@@ -27,7 +27,7 @@ public class AI : MonoBehaviour
         squadRoles.Add("Attacker", null);
         squadRoles.Add("Defender1", null);
         squadRoles.Add("Defender2", null);
-        if (gameObject.name.Contains("blu"))
+        if (gameObject.tag == "bTeam")
         {
             GameObject.Find("UI").GetComponent<UI>().botList.Add(gameObject);
 
@@ -304,7 +304,7 @@ public class AI : MonoBehaviour
                 switch (sqRole)
                 {
                     case "ObjectiveCarrier":
-                        if (gameObject.transform.childCount > 1)
+                        if (gameObject.transform.childCount > 11)
                         {
                             switch (gameObject.tag)
                             {
@@ -348,7 +348,7 @@ public class AI : MonoBehaviour
                         {
                             personalGoal = squadRoles["ObjectiveCarrier"];
                         }
-                        if (personalGoal.activeInHierarchy && personalGoal != null)
+                        if (personalGoal != null && personalGoal.activeInHierarchy)
                         {
                             agent.SetDestination(personalGoal.transform.position);
                         }
@@ -362,7 +362,6 @@ public class AI : MonoBehaviour
                         if (goal.name == "GREENGOAL" || goal.name == "BLUEGOAL")
                         {
                             Vector3 faceDirection = new Vector3(0, 0, 0);
-                            float dist = agent.remainingDistance;
                             if (agent.remainingDistance < 5)
                             {
                                 gameObject.transform.LookAt(faceDirection);
@@ -399,6 +398,8 @@ public class AI : MonoBehaviour
                     else
                     {
                         currentState = States.Squad;
+                        supportTarget = null;
+
                     }
                 }
                 else
@@ -454,7 +455,7 @@ public class AI : MonoBehaviour
     /*PUBLIC METHODS*/
     public static Vector3 RandomNavSphere(Vector3 origin)
     {
-        float dist = UnityEngine.Random.Range(1.0f, 15.0f);
+        float dist = UnityEngine.Random.Range(5.0f, 20f);
         Vector3 randDirection = UnityEngine.Random.insideUnitSphere * dist;
 
         randDirection += origin;
@@ -519,8 +520,7 @@ public class AI : MonoBehaviour
     {
         None,
         CarrierDead,
-        FriendlyObjStolen,
-        UnderAttack
+        FriendlyObjStolen
 
     };
 }

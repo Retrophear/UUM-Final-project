@@ -41,6 +41,17 @@ public class Vision : MonoBehaviour {
                 aiScript.UpdateLocation(other.transform);
             }
         }
+        else if(GetComponentInParent<TestAI>())
+        {
+            if (enemyTag == "gTeam" && other.name == "GREENGOAL")
+            {
+                GetComponentInParent<TestAI>().UpdateLocation(other.transform);
+            }
+            if (enemyTag == "bTeam" && other.name == "BLUEGOAL")
+            {
+                GetComponentInParent<TestAI>().UpdateLocation(other.transform);
+            }
+        }
     }
     void OnTriggerStay(Collider other)
     {
@@ -68,8 +79,16 @@ public class Vision : MonoBehaviour {
                     fpsScript.Shoot(direction.normalized); //Call the fps script and shoot
                     if (!GetComponentInParent<TestAI>())
                     {
-                        aiScript.currentState = AI.States.Attacking; //Set the state to attacking
+                        if (aiScript.currentState != AI.States.Supporting)
+                        {
+                            aiScript.currentState = AI.States.Attacking; //Set the state to attacking
+                        }
                         aiScript.attackTarget = target;
+                    }
+                    else if(GetComponentInParent<TestAI>())
+                    {
+                        GetComponentInParent<TestAI>().agentState = TestAI.State.Attacking;
+                        GetComponentInParent<TestAI>().attackTarget = target;
                     }
                 }
             }

@@ -153,13 +153,9 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nDefault bone length found in this file is different
-      form the one found in the source avatar:\n\t'mixamorig:LeftUpLeg' : position
-      error = 90.909889 mm\n\t'mixamorig:LeftLeg' : position error = 326.054535 mm\n\t'mixamorig:LeftFoot'
-      : position error = 338.108704 mm\n\t'mixamorig:LeftToeBase' : position error
-      = 132.230652 mm\n\nClip 'mixamo.com' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'mixamorig:Spine2' is inbetween humanoid transforms
+    animationImportWarnings: "\nClip 'mixamo.com' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'mixamorig:Spine2' is inbetween humanoid transforms
       and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
@@ -337,7 +333,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 7
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0

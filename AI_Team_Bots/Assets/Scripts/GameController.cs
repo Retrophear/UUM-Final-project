@@ -134,7 +134,6 @@ public class GameController : MonoBehaviour
 
     private void SystemStats()
     {
-        float msec = dTime * 1000.0f;
         float fps = (1.0f / dTime);
         fpsText.text = "FPS: " + Math.Round(fps,0).ToString();
     }

@@ -43,12 +43,13 @@ public class Goal : MonoBehaviour
                     if (other.tag == "bTeam")
                     {
                         gameObject.transform.parent = other.gameObject.transform;
-                        gameObject.transform.position = other.transform.position + new Vector3(0, 5, 0);
+                        gameObject.transform.position = other.transform.position + new Vector3(0, 15, 0);
                         InformTeam("gTeam", true);
                     }
                     else if (other.tag == "gTeam" && other.transform.FindChild("GREENGOAL") != null)
                     {
                         GameObject.Find("UI").GetComponent<UI>().grnScore++;
+                        GameObject.Find("UI").GetComponent<UI>().lastScored = Time.realtimeSinceStartup;
                         childObj = other.transform.FindChild("GREENGOAL");
                         ResetPostion();
                     }
@@ -63,12 +64,13 @@ public class Goal : MonoBehaviour
                     if (other.tag == "gTeam") //Check if tag is of green team
                     {
                         gameObject.transform.parent = other.gameObject.transform; //Add it as a child object to the bot
-                        gameObject.transform.position = other.transform.position + new Vector3(0, 5, 0);
+                        gameObject.transform.position = other.transform.position + new Vector3(0, 15, 0);
                         InformTeam("bTeam", true);
                     }
                     else if (other.tag == "bTeam" && other.transform.FindChild("BLUEGOAL") != null) //If the bot has made it to the goal with opposing teams flag
                     {
                         GameObject.Find("UI").GetComponent<UI>().bluScore++;
+                        GameObject.Find("UI").GetComponent<UI>().lastScored = Time.realtimeSinceStartup;
                         childObj = other.transform.FindChild("BLUEGOAL");
                         ResetPostion();
                     }
@@ -94,19 +96,38 @@ public class Goal : MonoBehaviour
         {
             if (stolen == true)
             {
-                go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.FriendlyObjStolen;
-                go.GetComponent<AI>().objStolen = true;
+                if (go.GetComponent<TestAI>())
+                {
+                    go.GetComponent<TestAI>().objStolen = true;
+                    go.GetComponent<TestAI>().agentState = TestAI.State.Retrieving; 
+                }
+                else if (go.GetComponent<AI>())
+                {
+                    go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.FriendlyObjStolen;
+                    go.GetComponent<AI>().objStolen = true;
+                }
             }
             else if (stolen == false)
             {
-                go.GetComponent<AI>().objStolen = false;
-                if (go.GetComponent<AI>().currentKeyEvent == AI.ImportantEvents.FriendlyObjStolen)
+                if (go.GetComponent<TestAI>())
                 {
-                    go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.None;
+                    go.GetComponent<TestAI>().objStolen = false;
+                    if(go.GetComponent<TestAI>().agentState == TestAI.State.Retrieving)
+                    {
+                        go.GetComponent<TestAI>().agentState = TestAI.State.Squad;
+                    }
                 }
-                if (go.GetComponent<AI>().currentState == AI.States.Retrieving)
+                else if (go.GetComponent<AI>())
                 {
-                    go.GetComponent<AI>().currentState = AI.States.Squad;
+                    go.GetComponent<AI>().objStolen = false;
+                    if (go.GetComponent<AI>().currentKeyEvent == AI.ImportantEvents.FriendlyObjStolen)
+                    {
+                        go.GetComponent<AI>().currentKeyEvent = AI.ImportantEvents.None;
+                    }
+                    if (go.GetComponent<AI>().currentState == AI.States.Retrieving)
+                    {
+                        go.GetComponent<AI>().currentState = AI.States.Squad;
+                    }
                 }
             }
         }

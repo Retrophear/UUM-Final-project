@@ -174,7 +174,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goal: {fileID: 0}
   agent: {fileID: 0}
-  currentState: 0
+  currentState: 1
+  agentState: 0
+  objStolen: 0
+  importantLocation: {fileID: 0}
+  attackTarget: {fileID: 0}
 --- !u!114 &11493656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -274,6 +278,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: currentState
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

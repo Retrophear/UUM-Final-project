@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//Taken from a unity tutorial
+//Adapted for animations of agents
+//Unity technologies
+using UnityEngine;
 using System.Collections;
 
 public class Test : MonoBehaviour {

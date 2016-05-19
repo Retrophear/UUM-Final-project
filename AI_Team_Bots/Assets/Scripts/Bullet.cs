@@ -5,13 +5,26 @@ public class Bullet : MonoBehaviour {
     private GameController gc;
     public int bDmg;
 
+    public float time;
+
     // Use this for initialization
 	void Start () {
         gc = GameObject.FindGameObjectWithTag("gc").GetComponent<GameController>();
         bDmg = 50;
 
 	}
-	
+	void FixedUpdate()
+    {
+        if(time > 0)
+        {
+            time -= Time.deltaTime;
+        }
+        if(time <= 0 && gameObject.activeInHierarchy)
+        {
+            gc.bQueue.Enqueue(gameObject);
+            gameObject.SetActive(false);
+        }
+    }
     void OnCollisionEnter(Collision other)
     {
 
@@ -21,6 +34,7 @@ public class Bullet : MonoBehaviour {
         }
         
         gc.bQueue.Enqueue(gameObject);
+        time = 0;
         gameObject.SetActive(false);
         
     }
